@@ -7,7 +7,7 @@ This summary covers the generalization problem, signs of overfitting, and techni
 
 ## Linear Regression Example and Generalization Issues
 
-In a simple linear regression model, we aim to predict a target variable $y$ using a combination of input features: $$hat{y} = w₁ * x₁ + w₂ * x₂ + ... + w₅ * x₅$$ Consider a scenario where $y$ is always twice the value of the first attribute, while other attributes are unrelated. If there are fewer training instances than parameters, the model may capture specific data patterns that fail to generalize, leading to poor performance on new data.
+In a simple linear regression model, we aim to predict a target variable $y$ using a combination of input features: $$ŷ = w₁ * x₁ + w₂ * x₂ + ... + w₅ * x₅$$ Consider a scenario where $y$ is always twice the value of the first attribute, while other attributes are unrelated. If there are fewer training instances than parameters, the model may capture specific data patterns that fail to generalize, leading to poor performance on new data.
 
 ## Polynomial Regression Example and High Variance
 
@@ -27,7 +27,7 @@ In polynomial regression, we predict $y$ from $x$ using higher-order terms: $$y�
 ## Methods to Prevent Overfitting in Neural Networks
 
 1.  **Penalty-Based Regularization**:
-    -   Adding a penalty to the loss function discourages complex models by limiting parameter sizes. For example, a constraint like $\lambda sum_{i=0}^d w_i^2$ penalizes large parameters, encouraging simpler models that generalize better.
+    -   Adding a penalty to the loss function discourages complex models by limiting parameter sizes. For example, a constraint like $\lambda \sum_{i=0}^d w_i^2$ penalizes large parameters, encouraging simpler models that generalize better.
 2.  **Ensemble Methods**:
     -   Techniques like **bagging** and **subsampling** train multiple models on different data subsets, averaging their predictions. For neural networks, **dropout** randomly disables neurons during training, which reduces reliance on specific patterns and encourages generalized learning.
 3.  **Early Stopping**:
