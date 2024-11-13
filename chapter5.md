@@ -93,8 +93,8 @@ Variance measures the **variability** of the model’s predictions at $Z$ when t
 The variance term for a model at $Z$ is: <!--  --> $$Variance(Z) = E_D[ ( g(Z, D) - E_D[g(Z, D)] )^2 ]$$
 
 Breaking it down:\
-- $g(Z, D) - E_D[g(Z, D)]$ : The difference between each individual prediction g(Z, D) from a dataset D and the average prediction $E_D[g(Z, D)]$.\
-- $( g(Z, D) - E_D[g(Z, D)] )^2$ : Squaring this difference gives the magnitude of variability around the average prediction.\
+- $g(Z, D) - E_D[g(Z, D)]$ : The difference between each individual prediction g(Z, D) from a dataset D and the average prediction $E_D[g(Z, D)]$.
+- $( g(Z, D) - E_D[g(Z, D)] )^2$ : Squaring this difference gives the magnitude of variability around the average prediction.
 - $E_D[...]$: Averaging this squared difference over all possible datasets gives the variance, capturing how much predictions change across datasets.
 
 High variance means the model is very sensitive to the specific training dataset and thus has inconsistent predictions.
@@ -295,99 +295,105 @@ Ensemble and regularization methods are essential techniques in machine learning
 
 ## 1. Bagging (Bootstrap Aggregating)
 
-**Concept**:\
+**Concept**:
 Bagging reduces model variance by training multiple models on different subsets of the data. It generates these subsets by sampling **with replacement**, so each subset can have duplicate instances from the original dataset. Bagging is particularly effective when data is limited, as it maximizes the information used to train each model.
 
-**How It Works**:\
+**How It Works**:
 1. Create multiple training datasets by sampling the original data with replacement. 2. Train a separate model on each resampled dataset. 3. Average or vote on the predictions of each model for the final prediction.
 
 **Key Characteristics**: - Works well with models prone to high variance (e.g., decision trees). - Reduces variance but maintains bias. - Practical for limited data scenarios.
 
-**Best Use Case**:\
+**Best Use Case**:
 Bagging is commonly used in decision tree ensembles, like random forests, where each tree is trained on a unique, resampled dataset to improve overall model stability.
 
 ------------------------------------------------------------------------
 
 ## 2. Subsampling
 
-**Concept**:\
+**Concept**:
 Subsampling, like bagging, creates multiple models by training on subsets of data but differs in that it samples **without replacement**. This method is most effective when ample data is available, allowing each subset to be unique and more diverse.
 
 **How It Works**: 1. Generate multiple training datasets by sampling without replacement. 2. Train separate models on each subset. 3. Combine model predictions by averaging or voting.
 
 **Key Characteristics**: - Better suited to larger datasets due to the unique sampling in each subset. - Requires smaller subsets $(s < n)$ to ensure diversity across models.
 
-**Best Use Case**:\
+**Best Use Case**:
 Subsampling is used in ensemble models where data size allows unique sampling, increasing model diversity without overlap (e.g., in large-scale random forests).
 
 ------------------------------------------------------------------------
 
 ## 3. Dropout
 
-**Concept**:\
+**Concept**:
 Dropout is a regularization method that prevents overfitting in neural networks by randomly "dropping" neurons during training. This effectively trains a different "thinned" subnetwork each time, creating an ensemble of subnetworks within a single neural network.
 
 **How It Works**: 1. During each training iteration, randomly drop a fraction of neurons, disabling them and all their connections. 2. Train the remaining active neurons, updating their weights. 3. During inference, use the full network but scale weights by the dropout probability to approximate the ensemble’s average effect.
 
-**Weight Scaling**:\
-At inference, weights are scaled by the dropout probability (e.g., 0.5 for a 50% dropout rate) to compensate for the dropout effect during training: $$
-\text{scaled weight} = \text{original weight} \times p
-$$ where $p$ is the probability of a neuron being active.
+**Weight Scaling**:
+At inference, weights are scaled by the dropout probability (e.g., 0.5 for a 50% dropout rate) to compensate for the dropout effect during training: $$\text{scaled weight} = \text{original weight} \times p$$ where $p$ is the probability of a neuron being active.
 
-**Key Characteristics**:\
-- Adds randomization within the network, preventing neurons from relying too heavily on specific features.\
-- Efficient because it reuses the same network with shared weights across all subnetworks.\
+**Key Characteristics**:
+- Adds randomization within the network, preventing neurons from relying too heavily on specific features.
+- Efficient because it reuses the same network with shared weights across all subnetworks.
 - Particularly useful in deep neural networks where co-adaptation between features can lead to overfitting.
 
-**Best Use Case**:\
+**Best Use Case**:
 Dropout is widely applied in deep learning, especially in image and text classification tasks where it effectively regularizes large models and reduces overfitting.
 
 ------------------------------------------------------------------------
 
 ## 4. Randomized Connection Dropping
 
-**Concept**:\
+**Concept**:
 This method randomly removes individual **connections** between layers, rather than entire nodes, in each training iteration. By creating diverse models with varying connections, it encourages unique feature representations and improves model robustness.
 
-**How It Works**: 1. Randomly drop different connections between nodes during each training pass, allowing each model to use a unique set of connections. 2. Unlike dropout, each resulting model does not share weights, resembling a traditional ensemble where each model is treated independently.
+**How It Works**: 
+1. Randomly drop different connections between nodes during each training pass, allowing each model to use a unique set of connections.
+2. Unlike dropout, each resulting model does not share weights, resembling a traditional ensemble where each model is treated independently.
 
-**Key Characteristics**:\
-- Creates a unique ensemble by varying connections rather than entire nodes.\
-- More computationally demanding than dropout, as it does not share weights.\
+**Key Characteristics**:
+- Creates a unique ensemble by varying connections rather than entire nodes.
+- More computationally demanding than dropout, as it does not share weights.
 - Useful for tasks beyond classification, like outlier detection.
 
-**Best Use Case**:\
+**Best Use Case**:
 This method is particularly useful for models that benefit from diverse connection patterns, such as autoencoders used in outlier detection, where diverse models improve robustness.
 
 ------------------------------------------------------------------------
 
 ## 5. Data Perturbation Ensembles
 
-**Concept**:\
+**Concept**:
 Data perturbation ensembles reduce variance by injecting noise directly into the input data, rather than modifying the model structure. This noise adds diversity to the data the model learns from, effectively preventing overfitting.
 
-**How It Works**: 1. Add noise to the input data or hidden layers to create diverse training examples. 2. Train on the perturbed data, repeating this process to train multiple “views” of the same data. 3. Average predictions across noisy inputs during inference to smooth predictions.
+**How It Works**:
+1. Add noise to the input data or hidden layers to create diverse training examples.
+2. Train on the perturbed data, repeating this process to train multiple “views” of the same data.
+3. Average predictions across noisy inputs during inference to smooth predictions.
 
-**Applications**:\
+**Applications**:
 Data perturbation is common in unsupervised tasks, like denoising autoencoders, and in domains like image processing where data augmentation (e.g., rotations, flips) is used to add diversity.
 
 **Key Characteristics**: - Not limited to neural networks; can be applied across various model types. - Effective in image augmentation, where transformations improve model generalization.
 
-**Best Use Case**:\
+**Best Use Case**:
 Data perturbation is ideal in image recognition (via data augmentation) or unsupervised tasks where input noise is injected to reduce overfitting.
 
 ------------------------------------------------------------------------
 
 ## 6. Parametric Model Selection and Averaging
 
-**Concept**:\
+**Concept**:
 Instead of training multiple models with different subsets or structures, parametric model selection optimizes a set of hyperparameters to identify the best configuration. Averaging across top configurations can further improve robustness, creating an ensemble of configurations within the same model.
 
-**How It Works**: 1. Define different configurations by varying hyperparameters (e.g., depth, activation functions). 2. Evaluate each configuration’s performance on validation data. 3. Select the best-performing configuration(s), or average the predictions from the top configurations for robustness.
+**How It Works**: 
+1. Define different configurations by varying hyperparameters (e.g., depth, activation functions).
+2. Evaluate each configuration’s performance on validation data.
+3. Select the best-performing configuration(s), or average the predictions from the top configurations for robustness.
 
 **Key Characteristics**: - Useful in deep learning where numerous hyperparameters influence performance. - Enables efficient model optimization without creating a full ensemble.
 
-**Best Use Case**:\
+**Best Use Case**:
 Parametric model selection is commonly used in deep learning to identify optimal network structures when hyperparameter tuning is essential (e.g., selecting layers, neurons).
 
 ------------------------------------------------------------------------
@@ -458,13 +464,16 @@ Early stopping is a low-cost, highly effective technique that controls the train
 Deep networks are inherently challenging to train due to issues such as the **exploding and vanishing gradient problem**. These issues cause gradients to distort as they propagate through multiple layers, making it hard to train each layer effectively.
 
 A major breakthrough in overcoming this challenge was **unsupervised pretraining**, a method of training networks layer-by-layer to provide stable initializations. Initially proposed for deep belief networks, unsupervised pretraining was later adapted for other models, such as autoencoders. In this section, we explore **unsupervised pretraining** through an autoencoder example, noting how this approach can even be adapted for supervised tasks.
+
 ---
 
 ### The Greedy Layer-wise Pretraining Process
 
 Unsupervised pretraining uses a **greedy, layer-wise** approach, training one layer at a time. This process begins with training the **outer hidden layers**, then moves to the **inner layers**. After pretraining, the resulting weights serve as strong initial values for the final backpropagation phase, which fine-tunes the entire network.
 
-The process, as illustrated in Figure 5.8, can be summarized as: 1. **Outer Layer Training**: Learn the first-level reduced representation using the outer layers. 2. **Inner Layer Training**: Use the representation from the outer layers to train the inner layers.
+The process, as illustrated in Figure 5.8, can be summarized as: 
+1. **Outer Layer Training**: Learn the first-level reduced representation using the outer layers.
+2. **Inner Layer Training**: Use the representation from the outer layers to train the inner layers.
 
 This strategy helps achieve a stable starting point that reduces issues with vanishing gradients. Even though this method is unsupervised, it is effective in initializing weights for **supervised applications** like classification.
 
@@ -665,9 +674,7 @@ The main requirement for parameter sharing is that **the function computed at di
     -   The weights between the encoder and decoder can be shared symmetrically.
     -   Although an autoencoder can function without shared weights, sharing them enhances the **generalization** ability of the model to new, unseen data.
 
-    Let $W_{\text{encoder}}$ and $W_{\text{decoder}}$ represent the weights of the encoder and decoder. By setting: $$
-    W_{\text{decoder}} = W_{\text{encoder}}^\top
-    $$ the model can achieve greater regularization.
+    Let $W_{\text{encoder}}$ and $W_{\text{decoder}}$ represent the weights of the encoder and decoder. By setting: $W_{\text{decoder}} = W_{\text{encoder}}^\top$ the model can achieve greater regularization.
 
 2.  **Recurrent Neural Networks (RNNs)**:
 
@@ -675,9 +682,7 @@ The main requirement for parameter sharing is that **the function computed at di
     -   The network is replicated across time steps, with each layer sharing the same parameters for each timestamp.
     -   This means that a single set of weights, $W$, is used repeatedly across time, as shown below:
 
-    $$
-    h_t = f(W \cdot h_{t-1} + U \cdot x_t + b)
-    $$
+    $$h_t = f(W \cdot h_{t-1} + U \cdot x_t + b)$$
 
     where $h_t$ is the hidden state at time $t$, $W$ is the weight matrix shared across all time steps, $U$ is an input weight matrix, $x_t$ is the input at time $t$, and $b$ is the bias term.
 
@@ -687,9 +692,9 @@ The main requirement for parameter sharing is that **the function computed at di
     -   This parameter sharing assumes that the same features (like edges or textures) could be important across the entire image.
     -   For example, if a filter $K$ detects a specific pattern (like an edge), it can apply that detection across various positions in the image. The result of this convolution operation is the **feature map**.
 
-    In mathematical terms, for an image $I$ and a filter $K$ of size $f \times f$, the convolution operation at positio $(i, j)$ is given by: $$
-    (I * K)_{i,j} = \sum_{m=0}^{f-1} \sum_{n=0}^{f-1} I_{i+m, j+n} \cdot K_{m, n}
-    $$
+    In mathematical terms, for an image $I$ and a filter $K$ of size $f \times f$, the convolution operation at positio $(i, j)$ is given by:
+    $$(I * K)_{i,j} = \sum_{m=0}^{f-1} \sum_{n=0}^{f-1} I_{i+m, j+n} \cdot K_{m, n}$$
+
 
 ### Domain-Specific Insights
 
@@ -701,17 +706,12 @@ An alternative to strict weight sharing is **soft weight sharing**, where weight
 
 For example, if we have weights $w_i$ and $w_j$ that we expect to be similar, we can add the following penalty to the loss function:
 
-$$
-\frac{\lambda}{2} (w_i - w_j)^2
-$$
+$$\frac{\lambda}{2} (w_i - w_j)^2$$
 
 During backpropagation, this results in a small update term that **nudges** $w_i$ and $w_j$ towards each other. The weight update rules would then include:
 
-$$
-\Delta w_i = \alpha \lambda (w_j - w_i)
-$$ $$
-\Delta w_j = \alpha \lambda (w_i - w_j)
-$$
+$$\Delta w_i = \alpha \lambda (w_j - w_i)$$ 
+$$\Delta w_j = \alpha \lambda (w_i - w_j)$$
 
 where $\alpha$ is the learning rate, and $\lambda$ controls the strength of the penalty.
 
@@ -750,36 +750,21 @@ De-noising autoencoders aim to reconstruct the original, uncorrupted data from n
 
 In a standard autoencoder, the goal is to reconstruct an input $x$ as accurately as possible. However, a de-noising autoencoder takes a corrupted version of the input, $\tilde{x}$, and tries to output the clean, original input $x$. This setup requires the autoencoder to learn representations that ignore noise, focusing only on the underlying structure of the data.
 
-The loss function for a de-noising autoencoder is: $$
-\mathcal{L}(\theta) = \frac{1}{N} \sum_{i=1}^N \| x^{(i)} - f_\theta(\tilde{x}^{(i)}) \|^2
-$$ where: - $x^{(i)}$ is the clean input, - $\tilde{x}^{(i)}$ is the noisy input, - $f_\theta$ is the function learned by the autoencoder (mapping noisy inputs to clean outputs), - $N$ is the number of training examples.
+The loss function for a de-noising autoencoder is: $$\mathcal{L}(\theta) = \frac{1}{N} \sum_{i=1}^N \| x^{(i)} - f_\theta(\tilde{x}^{(i)}) \|^2$$ where: - $x^{(i)}$ is the clean input, - $\tilde{x}^{(i)}$ is the noisy input, - $f_\theta$ is the function learned by the autoencoder (mapping noisy inputs to clean outputs), - $N$ is the number of training examples.
 
 ### Types of Noise
 
 #### Gaussian Noise
 
-For continuous-valued inputs, Gaussian noise can be added to each feature independently. If $x_i$ is a feature in the input vector $x$, the noisy version $\tilde{x}_i$ becomes: $$
-\tilde{x}_i = x_i + \epsilon_i, \quad \epsilon_i \sim \mathcal{N}(0, \lambda)
-$$ where $\epsilon_i$ is sampled from a Gaussian distribution with mean 0 and variance $\lambda$, which controls the intensity of the noise.
+For continuous-valued inputs, Gaussian noise can be added to each feature independently. If $x_i$ is a feature in the input vector $x$, the noisy version $\tilde{x}_i$ becomes: $$\tilde{x}_i = x_i + \epsilon_i, \quad \epsilon_i \sim \mathcal{N}(0, \lambda)$$ where $\epsilon_i$ is sampled from a Gaussian distribution with mean 0 and variance $\lambda$, which controls the intensity of the noise.
 
 #### Masking Noise
 
-Masking noise randomly sets a fraction $f$ of the input dimensions to zero: $$
-\tilde{x}_i = \begin{cases} 
-    x_i & \text{with probability } 1 - f \\
-    0 & \text{with probability } f 
-\end{cases}
-$$ This noise is particularly effective for sparse or binary data.
+Masking noise randomly sets a fraction $f$ of the input dimensions to zero: $$\tilde{x}_i = \begin{cases} x_i & \text{with probability } 1 - f \\0 & \text{with probability } f\end{cases}$$ This noise is particularly effective for sparse or binary data.
 
 #### Salt-and-Pepper Noise
 
-Salt-and-pepper noise randomly sets a fraction $f$ of input values to either the minimum or maximum possible value: $$
-\tilde{x}_i = \begin{cases} 
-    0 & \text{with probability } f / 2 \\
-    1 & \text{with probability } f / 2 \\
-    x_i & \text{with probability } 1 - f
-\end{cases}
-$$
+Salt-and-pepper noise randomly sets a fraction $f$ of input values to either the minimum or maximum possible value: $$\tilde{x}_i = \begin{cases} 0 & \text{with probability } f / 2 \\1 & \text{with probability } f / 2 \\x_i & \text{with probability } 1 - f\end{cases}$$
 
 ### Manifold Learning and Regularization
 
@@ -797,23 +782,13 @@ The contractive autoencoder’s objective is to minimize the reconstruction loss
 
 Let: - $h_j = g \left( \sum_{i} w_{ij} x_i + b_j \right)$ be the activation of hidden unit $h_j$, where $g$ is a non-linear activation function (e.g., sigmoid or ReLU). - $x_i$ be an input feature.
 
-The contractive regularization term $R$ is defined as: $$
-R = \frac{1}{2} \sum_{i=1}^d \sum_{j=1}^k \left( \frac{\partial h_j}{\partial x_i} \right)^2
-$$
+The contractive regularization term $R$ is defined as: $$R = \frac{1}{2} \sum_{i=1}^d \sum_{j=1}^k \left( \frac{\partial h_j}{\partial x_i} \right)^2$$
 
-The complete objective function $J$ for the contractive autoencoder is: $$
-J = \mathcal{L}_{\text{reconstruction}} + \lambda R
-$$ where: - $\mathcal{L}_{\text{reconstruction}}$ is the reconstruction error, given by: $$
-  \mathcal{L}_{\text{reconstruction}} = \frac{1}{2} \sum_{i=1}^d (x_i - \hat{x}_i)^2
-  $$ - $\lambda$ is a regularization parameter that controls the influence of the contractive penalty.
+The complete objective function $J$ for the contractive autoencoder is: $$J = \mathcal{L}_{\text{reconstruction}} + \lambda R$$ where: - $\mathcal{L}_{\text{reconstruction}}$ is the reconstruction error, given by: $$\mathcal{L}_{\text{reconstruction}} = \frac{1}{2} \sum_{i=1}^d (x_i - \hat{x}_i)^2$$ - $\lambda$ is a regularization parameter that controls the influence of the contractive penalty.
 
 ### Computing the Gradient Penalty
 
-For a sigmoid activation function $g(z) = \sigma(z) = \frac{1}{1 + e^{-z}}$, the partial derivative of $h_j$ with respect to $x_i$ is: $$
-\frac{\partial h_j}{\partial x_i} = w_{ij} \cdot h_j \cdot (1 - h_j)
-$$ Substituting this into $R$, the contractive penalty becomes: $$
-R = \frac{1}{2} \sum_{i=1}^d \sum_{j=1}^k \left( w_{ij} \cdot h_j \cdot (1 - h_j) \right)^2
-$$
+For a sigmoid activation function $g(z) = \sigma(z) = \frac{1}{1 + e^{-z}}$, the partial derivative of $h_j$ with respect to $x_i$ is: $$\frac{\partial h_j}{\partial x_i} = w_{ij} \cdot h_j \cdot (1 - h_j)$$ Substituting this into $R$, the contractive penalty becomes: $$R = \frac{1}{2} \sum_{i=1}^d \sum_{j=1}^k \left( w_{ij} \cdot h_j \cdot (1 - h_j) \right)^2$$
 
 This penalty term discourages the hidden layer from responding strongly to small changes in the input, making it robust to noise and minor fluctuations. The result is that only significant, data-relevant directions (aligned with the data’s manifold) are preserved, while others are damped.
 
@@ -831,15 +806,14 @@ This penalty term discourages the hidden layer from responding strongly to small
 Variational Autoencoders (VAEs) are a class of generative models that add **probabilistic assumptions** to traditional autoencoders. The main goal of a VAE is not just to compress and reconstruct data (like a traditional autoencoder) but also to **learn a latent space representation** from which new data samples can be generated.
 
 In a VAE, each input data point is encoded into a hidden representation that is constrained to follow a **Gaussian distribution** across the entire dataset. This probabilistic constraint is what enables VAEs to generate new data by sampling from this Gaussian distribution.
+
 ---
 
 ## Core Structure of a VAE
 
--   **Encoder Network**: Maps each input $X$ to a set of **mean** ($\mu(X)$) and **standard deviation** ($\sigma(X)$) vectors, which define a Gaussian distribution specific to each data point. This Gaussian serves as a "posterior distribution" over the latent variables given the input.
+-   **Encoder Network**: Maps each input $X$ to a set of **mean** $\mu(X)$ and **standard deviation** $\sigma(X)$vectors, which define a Gaussian distribution specific to each data point. This Gaussian serves as a "posterior distribution" over the latent variables given the input.
 
--   **Latent Space Sampling**: Instead of directly using the encoded mean and standard deviation for reconstruction, the VAE samples a latent variable $z$ from this distribution: $$
-    z = \mu(X) + \sigma(X) \odot \epsilon
-    $$ where $\epsilon$ is a random variable drawn from a standard normal distribution $N(0, I)$ (with mean 0 and variance 1), and $\odot$ represents element-wise multiplication. This approach, known as the **reparameterization trick**, makes the sampling process differentiable, which allows for backpropagation during training.
+-   **Latent Space Sampling**: Instead of directly using the encoded mean and standard deviation for reconstruction, the VAE samples a latent variable $z$ from this distribution: $$z  = \mu(X) + \sigma(X) \odot \epsilon$$ where $\epsilon$ is a random variable drawn from a standard normal distribution $N(0, I)$ (with mean 0 and variance 1), and $\odot$ represents element-wise multiplication. This approach, known as the **reparameterization trick**, makes the sampling process differentiable, which allows for backpropagation during training.
 
 -   **Decoder Network**: The sampled latent variable $z$ is fed into the decoder, which tries to reconstruct the original input $X$. The decoder aims to produce an output as close as possible to $X$, effectively "denoising" the input back from the latent space.
 
@@ -851,36 +825,33 @@ The VAE’s loss function is composed of two main parts:
 
 ### 1. Reconstruction Loss $L$
 This loss measures how well the reconstructed output **$X'$** matches the original input $X$. A common choice is **Mean Squared Error (MSE)** or **Binary Cross-Entropy (BCE)**, depending on the nature of the data. The reconstruction loss encourages the model to preserve input information in the output and is defined as:
-$$
-L = ||X - X'||^2
-$$
+$$L = ||X - X'||^2$$
 
 ### 2. Regularization Loss (KL Divergence) $R$
 The **Kullback-Leibler (KL) Divergence** term enforces that the learned distribution $q(z|X)$ (i.e., the distribution of $z$ conditioned on $X$) stays close to a standard Gaussian $N(0, I)$. This regularization term ensures that, across all data points, the latent space is centered around zero with unit variance, creating a smooth and continuous latent space.
 
 Mathematically, the KL Divergence between $q(z|X)$ and $N(0, I)$ is given by:
-$$
-R = \sum_{i=1}^k \left( \frac{\sigma(X)_i^2 + \mu(X)_i^2 - 2 \ln(\sigma(X)_i) - 1}{2} \right)
-$$
+$$R = \sum_{i=1}^k \left( \frac{\sigma(X)_i^2 + \mu(X)_i^2 - 2 \ln(\sigma(X)_i) - 1}{2} \right)$$
 where $k$ is the dimension of the latent space.
 
 
 
 ### Total Loss
+
 The overall objective function $J$ for each data point combines the reconstruction and regularization losses:
 $$
 J = L + \lambda R
 $$
 where $\lambda$ is a weighting parameter. By adjusting $\lambda$, we balance the model’s tendency to **faithfully reconstruct** the input with its ability to **generalize by adhering to a Gaussian prior**.
+
 ---
 
 ## Reparameterization Trick
 
 The reparameterization trick is crucial because the direct sampling process is **non-differentiable**, making backpropagation impossible. To circumvent this, the **stochastic sampling** is broken down into a **deterministic function** that introduces the randomness via an additional input.
 
-This is done by sampling from a standard normal distribution $\epsilon \sim N(0, I)$ and transforming it using the **mean** and **standard deviation** vectors: $$
-z = \mu(X) + \sigma(X) \odot \epsilon
-$$ This trick allows us to retain **stochasticity** in the latent representation while keeping the overall model differentiable and trainable with backpropagation.
+This is done by sampling from a standard normal distribution $\epsilon \sim N(0, I)$ and transforming it using the **mean** and **standard deviation** vectors: $$z = \mu(X) + \sigmaX \odot \epsilon$$ 
+This trick allows us to retain **stochasticity** in the latent representation while keeping the overall model differentiable and trainable with backpropagation.
 
 ------------------------------------------------------------------------
 
